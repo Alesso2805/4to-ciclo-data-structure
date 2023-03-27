@@ -1,0 +1,84 @@
+//CALCULAR EL AREA Y PERIMETRO DE UN RECTANGULO
+#include "pch.h"
+#include <iostream>
+using namespace std;
+//CREANDO CALSE RECTANGULO CON TEMPLATE
+template<typename T>
+class Rectangulo {
+	T base, altura;
+public:
+	Rectangulo(T base, T altura);
+	~Rectangulo();
+	T Area();
+	T Perimetro();
+};
+
+//IMPLEMENTAR COSNTRUCTOR, DESTRUCOTR Y METODO DE LA CLASE
+template<typename T>
+Rectangulo<T>::Rectangulo(T base, T altura) {
+	this->base = base;
+	this->altura = altura;
+}
+
+template<typename T>
+Rectangulo<T>::~Rectangulo(){}
+
+template<typename T>
+T Rectangulo<T>::Area(){
+	return base * altura;
+}
+
+template<typename T>
+T Rectangulo<T>::Perimetro() {
+	return (base * 2) + (altura * 2);
+}
+int main()
+{
+	//INSTANCIAR
+	int a, b;
+	cout << "Base: "; cin >> a;
+	cout << "Altura: "; cin >> b;
+	Rectangulo<double>objRectangulo(a, b);
+	double rsa = objRectangulo.Area();
+	double rsp = objRectangulo.Perimetro();
+	cout << "\nArea: " << rsa;
+	cout << "\nPerimetro: " << rsp;
+	cin.get();
+	return 0;
+}
+
+
+
+
+
+//TEMPLATE VALORES ABSOLUTOS
+
+#include "pch.h"
+#include <iostream>
+using namespace std;
+
+//PROTOTIPO DE FUNCION 
+template<class TIPOD>
+void mostrarAbs(TIPOD numero);
+
+
+int main()
+{
+	int num1 = 4;
+	int num2 = 56.60;
+	double num3 = -123;
+
+	mostrarAbs(num1);
+	mostrarAbs(num2);
+	mostrarAbs(num3);
+	cin.get();
+	cin.ignore();
+	return 0;
+}
+
+template<class TIPOD>
+void mostrarAbs(TIPOD numero) {
+	if (numero < 0)
+		numero = numero * -1;
+	cout << "\nEl valor absoluto del numero es " << numero;
+}
