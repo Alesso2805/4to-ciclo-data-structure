@@ -1,3 +1,4 @@
+/////////////////////////////////////////////////
 #include <iostream>
 using namespace std;
 
@@ -12,11 +13,10 @@ int main()
   cout << "\nEntero: " << suma < int >(x, y);
   cout << "\nFloat: " << suma < float >(x, y);
   cout << "\nDouble: " << suma < double >(x, y);
-
   return 0;
 }
 
-
+/////////////////////////////////////////////////
 
 
 #include <iostream>
