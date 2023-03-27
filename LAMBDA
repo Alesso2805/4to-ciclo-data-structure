@@ -1,0 +1,56 @@
+#include "pch.h"
+#include <iostream>
+using namespace std;
+
+int main() {
+	auto f1 = [](int x, int y) {return x + y; };
+	cout << f1(2, 4);
+	cout << "\n";
+	cout << f1(321, 13.434);
+	cout << "\n";
+	cout << f1(3532.211, 6546);
+	cout << "\n";
+	cout << f1(76790, 423);
+	cin.get();
+	return 0;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+#include "pch.h"
+#include <iostream>
+using namespace std;
+
+int main() {
+	auto f1 = [](int x, int y) {return x + y; };
+	cout << f1(2, 4);
+	auto f2 = [](float x, float y, float z) {return x * y - z; };
+	cout << "\n" << f2(1.4, 2.6, 1);
+	auto f3 = [](int a, int b) {return a * b; }(4, 8);
+	cout << "\n" << f3;
+	cin.get();
+	return 0;
+}
+
+/////////////////////////////////////////////////////////////////////
+
+
+#include "pch.h"
+#include <iostream>
+#include <functional>
+using namespace std;
+
+int main() {
+	auto f1 = [](int x, int y) {return x + y; };
+	cout << f1(2, 4);
+	auto f2 = [](float x, float y, float z) {return x * y - z; };
+	cout << "\n" << f2(1.4, 2.6, 1);
+	auto f3 = [](int a, int b) {return a * b; }(4, 8);
+	cout << "\n" << f3;
+	function<int(int, int)>f4 = [](int x, int y) {return x - y; };
+	cout << f4(10, 2);
+	cin.get();
+	return 0;
+}
