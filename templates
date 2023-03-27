@@ -6,8 +6,7 @@ template < typename T > T suma (T a, T b)
   return a + b;
 }
 
-int
-main ()
+int main()
 {
   double x = 10.5, y = 20.75;
   cout << "\nEntero: " << suma < int >(x, y);
@@ -21,7 +20,9 @@ main ()
 
 
 #include <iostream>
+#include "conio.h"
 using namespace std;
+//CREANDO CLASE CUADRADO CON TEMPLATE
 template<typename T>
 
 class Cuadrado {
@@ -35,7 +36,7 @@ class Cuadrado {
 //IMPLEMENTAR EL CONSTRUCOTR, DESTRUCTOR, ÁREA
 
 template<typename T>
-T Cuadrado<T>::Cuadrado(T lado){
+Cuadrado<T>::Cuadrado(T lado){
     this->lado = lado;
 }
 
@@ -48,7 +49,7 @@ T Cuadrado<T>::Area(){
 }
 
 int main(){
-    //INSTANCIA
+    //INSTANCIANDO Y USANDO LOS MÉTODOS
     Cuadrado<double>objCuadrado(12.5);
     double rs=objCuadrado.Area();
     cout <<"Area: "<< rs;
