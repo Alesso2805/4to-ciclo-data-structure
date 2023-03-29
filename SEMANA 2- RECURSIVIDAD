@@ -1,0 +1,123 @@
+#include "pch.h"
+#include <iostream>
+using namespace std;
+
+int factorial(int n) {
+	if (n == 0) return 1;
+	else {
+		return n * factorial(n - 1);
+	}
+}
+
+int main() {
+	int n;
+	int resultado;
+	cout << "\nIngresar el numero: ";
+	cin >> n;
+	resultado = factorial(n);
+	cout << "\nEl factorial es: " << resultado;
+	cin.get();
+	cin.ignore();
+	return 0;
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+
+
+#include "pch.h"
+#include <iostream>
+using namespace std;
+
+void invertir(int num) { // 756
+	cout << num % 10; //756 % 10 --> 6 ** 75 % 10 --> 5 ** 7 % 10 --> 7
+	if (num > 10) invertir(num / 10); //756/10 --> 75 ** 75/10 --> 7
+}
+
+int main() {
+	int num;
+	cout << "\nIngresar numero: ";
+	cin >> num;
+	invertir(num);
+	cin.get();
+	cin.ignore();
+	return 0;
+}
+
+///////////////////////////2DA VERSION DE LO ANTERIOR/////////////////////
+
+#include "pch.h"
+#include <iostream>
+using namespace std;
+
+int invertir(int num, int num1) {
+	num1 = (num1 * 10) + (num % 10); //756%10 --> 6
+	num = num / 10;
+	if (num > 0) return invertir(num, num1);
+	else return num1;
+}
+
+
+int main() {
+	int num;
+	cout << "\nIngresar numero: ";
+	cin >> num;
+	cout << "\nInvertido: " << invertir(num, 0);
+	cin.get();
+	cin.ignore();
+	return 0;
+}
+
+//////////////////////////AVERGIAUR LA POTENCIA DE UN NUMERO////////////////////
+
+#include "pch.h"
+#include <iostream>
+using namespace std;
+
+int potencia(int b, int expo) {
+	if(expo == 0)return 1;
+	if (expo == 1) return b;
+	else
+		return pow(b, expo);
+}
+
+
+int main() {
+	int b, expo;
+	cout << "\nIngresar base: ";
+	cin >> b;
+	cout << "\nIngresar exponente: ";
+	cin >> expo;
+	cout << "\nEl resultado es: " << potencia(b,  expo);
+	cin.get();
+	cin.ignore();
+	return 0;
+}
+
+///////////////////////////2DA MANERA DE HACER LO ANTERIOR/////////////////////////
+
+#include "pch.h"
+#include <iostream>
+using namespace std;
+
+int potencia(int base, int expo) {
+	if(expo == 0)return 1;
+	if (expo == 1) return base;
+	else
+		return base*potencia(base,expo-1);
+}
+
+
+int main() {
+	int base, expo;
+	cout << "\nIngresar base: ";
+	cin >> base;
+	cout << "\nIngresar exponente: ";
+	cin >> expo;
+	cout << "\nEl resultado es: " << potencia(base, expo);
+	cin.get();
+	cin.ignore();
+	return 0;
+}
+
+
