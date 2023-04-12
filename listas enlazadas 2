@@ -1,0 +1,111 @@
+////////////////////LISTA.H///////////////////
+
+#pragma once
+#include "Nodo.h"
+#include "Punto.h"
+
+template<class T>
+class Lista {
+private:
+    Nodo<T>* inicio;
+public:
+    Lista() {inicio = NULL; }
+    ~Lista();
+    void insertarInicio(T v);
+    void mostrar();
+};
+//IMPLEMENTACION
+template<class T>
+Lista<T>::~Lista(){
+    Nodo<T>* temp;
+    while(inicio != NULL){
+        temp=inicio;
+        inicio=inicio->siguiente;
+        delete temp;
+        temp = NULL;
+    }
+}
+
+template<class T>
+void Lista<T>::insertarInicio(T v) {
+    Nodo<T> *nodo = new Nodo<T>(v);
+    if (inicio == NULL) inicio = nodo;
+    else
+        nodo->siguiente = inicio;
+    inicio=nodo;
+    nodo=NULL;
+}
+
+template<class T>
+void Lista<T>::mostrar()  {
+    Nodo<T>* nodo = inicio;
+    cout << "L-> ";
+    do{
+        Punto* pto = (Punto*)(nodo->valor);
+        cout << pto->toString();
+        if(nodo != NULL)
+            cout << "-> ";
+        nodo = nodo->siguiente;
+    } while(nodo != NULL);
+    cout << "\n";
+}
+
+
+
+///////////////punto.h////////////////////////
+
+#pragma once
+#include <string>
+#include <sstream>
+using namespace std;
+
+class Punto {
+    int x, y;
+public:
+    Punto(int x=0, int y=0):x(x),y(y){}
+    string toString(){
+        ostringstream ss;
+        ss << "p(";
+        ss << x;
+        ss << ", ";
+        ss << y;
+        ss << ")";
+        return(ss.str());
+    }
+};
+
+
+
+
+
+////////////////NODO.H///////////////////
+#pragma once
+template<class T>
+class Nodo {
+public:
+    T valor; //elemento del nodo
+    Nodo<T>* siguiente; //puntero del nodo siguiente
+public:
+    Nodo(T v, Nodo<T>* sig = NULL){
+        valor = v;
+        siguiente = sig;
+    }
+};
+
+
+/////////////////////main//////////////////////
+
+#include <iostream>
+#include "Lista.h"
+
+int main() {
+    Lista<Punto*> pLista;
+    pLista.insertarInicio(new Punto(8,1));
+    pLista.insertarInicio(new Punto(7,2));
+    pLista.insertarInicio(new Punto(1,3));
+    pLista.insertarInicio(new Punto(9,4));
+    pLista.insertarInicio(new Punto(4,5));
+    pLista.mostrar();
+    cin.get();
+    return 0;
+}
