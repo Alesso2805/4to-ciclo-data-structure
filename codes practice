@@ -1,0 +1,241 @@
+//El siguiente codigo calcula la raiz cuadrada de un numero entero.  
+//Si el numero no es un cuadrado perfecto(no hay raiz cuadrada entero), entonces devuelve -1. 
+//Lo hace mediante supocisiones sucesivas.
+//Si N es 100, primera adivina si N es 50. ¿Demasiado alto? Pruebe algo mas bajo, a mitad de camino entre 1 y 50, etc.
+//¿Cual es big-o? en c++
+
+#include <iostream>
+
+int sqrt(int N) {
+    if (N <= 0) {
+        return -1; // Manejo de casos inválidos
+    }
+
+    int low = 1; // Inicio del rango de búsqueda
+    int high = N; // Fin del rango de búsqueda
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2; // Calcula el punto medio
+
+        // Comprueba si mid al cuadrado es igual a N
+        if (mid * mid == N) {
+            return mid; // Se encontró la raíz cuadrada exacta
+        }
+        // Si mid al cuadrado es menor que N, ajusta la búsqueda a la mitad superior
+        else if (mid * mid < N) {
+            low = mid + 1;
+        }
+        // Si mid al cuadrado es mayor que N, ajusta la búsqueda a la mitad inferior
+        else {
+            high = mid - 1;
+        }
+    }
+
+    return -1; // No se encontró una raíz cuadrada entera, devuelve -1
+}
+
+int main() {
+    int N = 30;
+    int result = sqrt(N);
+    if (result == -1) {
+        std::cout << "No se encontró una raíz cuadrada entera para " << N << " es -1"<<std::endl;
+    } else {
+        std::cout << "La raíz cuadrada de " << N << " es: " << result << std::endl;
+    }
+    return 0;
+}
+__________________________________________________________________________
+SegundA FORMA:
+
+#include <iostream>
+
+int sqrt(int N) {
+  if (N <= 0) {
+    return -1; // devuelve -1 para números no válidos
+  }
+
+  int low = 1; // límite inferior de búsqueda
+  int high = N; // límite superior de búsqueda
+
+  while (low <= high) {
+    int mid = low + (high - low) / 2; // punto medio de la búsqueda
+
+    if (mid == N / mid) {
+      return mid; // si encuentra la raíz cuadrada exacta, la devuelve
+    } else if (mid < N / mid) {
+      low = mid + 1; // si el cuadrado medio es menor que N, busca en la mitad superior
+    } else {
+      high = mid - 1; // si el cuadrado medio es mayor que N, busca en la mitad inferior
+    }
+  }
+
+  return -1; // si no encuentra una raíz cuadrada exacta, devuelve -1
+}
+
+int main() {
+  int N = 100;
+  int result = sqrt(N);
+  if (result == -1) {
+    std::cout << "No hay raíz cuadrada entera para " << N << std::endl;
+  } else {
+    std::cout << "La raíz cuadrada entera de " << N << " es: " << result << std::endl;
+  }
+  return 0;
+}
+
+
+************************************************************************************************************************************
+
+//En un examen de suficiencia, cuatro jurados emiten una nota entre cero y cien. 
+//Para obtener el promedio final solo se considera las notas intermedia, descartandose la mas baja y la mas alta.
+//Implementar un programa c++, utilizando templates para calcular el promedio de notas.
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+// Función template para calcular el promedio de un vector de elementos
+template <typename T>
+T calcularPromedio(const std::vector<T>& notas) {
+  if (notas.empty()) {
+    return 0; // Si el vector está vacío, devuelve 0
+  }
+
+  // Ordena el vector de menor a mayor
+  std::vector<T> notasOrdenadas = notas;
+  std::sort(notasOrdenadas.begin(), notasOrdenadas.end());
+
+  // Descarta la nota más baja y la más alta
+  notasOrdenadas.erase(notasOrdenadas.begin());
+  notasOrdenadas.pop_back();
+
+  // Calcula la suma de las notas intermedias
+  T suma = 0;
+  for (const T& nota : notasOrdenadas) {
+    suma += nota;
+  }
+
+  // Calcula y devuelve el promedio
+  return suma / static_cast<T>(notasOrdenadas.size());
+}
+
+int main() {
+  // Ejemplo de uso con notas enteras
+  std::vector<int> notasEnteras = {75, 85, 90, 92};
+  int promedioEntero = calcularPromedio(notasEnteras);
+  std::cout << "El promedio de notas enteras es: " << promedioEntero << std::endl;
+
+  // Ejemplo de uso con notas de punto flotante
+  std::vector<double> notasFlotantes = {87.5, 92.0, 88.25, 95.5};
+  double promedioFlotante = calcularPromedio(notasFlotantes);
+  std::cout << "El promedio de notas de punto flotante es: " << promedioFlotante << std::endl;
+
+  return 0;
+}
+___________________________________________________________________________________________
+
+Segunda Forma:
+
+#include <iostream>
+#include <algorithm>
+
+// Función plantilla para calcular el promedio de notas
+template <typename T>
+T calcularPromedio(T nota1, T nota2, T nota3, T nota4) {
+  // Encontrar la nota más baja y la más alta
+  T notaMinima = std::min(std::min(nota1, nota2), std::min(nota3, nota4));
+  T notaMaxima = std::max(std::max(nota1, nota2), std::max(nota3, nota4));
+  
+  // Calcular la suma de las notas restantes
+  T suma = nota1 + nota2 + nota3 + nota4 - notaMinima - notaMaxima;
+  
+  // Calcular el promedio y devolverlo
+  return suma / 2; // Dividir por 2 ya que descartamos 2 notas (la más baja y la más alta)
+}
+
+int main() {
+  // Obtener las notas del usuario
+  int nota1, nota2, nota3, nota4;
+  std::cout << "Ingrese la nota 1: ";
+  std::cin >> nota1;
+  std::cout << "Ingrese la nota 2: ";
+  std::cin >> nota2;
+  std::cout << "Ingrese la nota 3: ";
+  std::cin >> nota3;
+  std::cout << "Ingrese la nota 4: ";
+  std::cin >> nota4;
+  
+  // Calcular el promedio de notas y mostrarlo en pantalla
+  int promedio = calcularPromedio(nota1, nota2, nota3, nota4);
+  std::cout << "El promedio de notas es: " << promedio << std::endl;
+  
+  return 0;
+}
+
+************************************************************************************************************************************************
+//Escribir un programa utilizando expresiones Lambda que reciba como parametro 3 numeros enteros. 
+//Las funcion retorna el numero mayor
+
+#include <iostream>
+#include <functional> // Para usar las expresiones lambda
+
+int main() {
+  // Obtener los tres números del usuario
+  int num1, num2, num3;
+  std::cout << "Ingrese el primer número: ";
+  std::cin >> num1;
+  std::cout << "Ingrese el segundo número: ";
+  std::cin >> num2;
+  std::cout << "Ingrese el tercer número: ";
+  std::cin >> num3;
+
+  // Utilizar una expresión lambda para encontrar el número mayor
+  std::function<int(int, int)> encontrarMayor = [](int a, int b) {
+    return a > b ? a : b;
+  };
+
+  int mayor = encontrarMayor(num1, encontrarMayor(num2, num3));
+
+  // Mostrar el número mayor en pantalla
+  std::cout << "El número mayor es: " << mayor << std::endl;
+
+  return 0;
+}
+********************************************************************************************
+
+//Escribir un programa recursivo que calcule la suma de los digitos de un numero entero mayor a cero. C++
+
+#include <iostream>
+
+// Función recursiva para calcular la suma de los dígitos
+int sumaDigitos(int num) {
+  // Caso base: si el número tiene un solo dígito, retorna ese dígito
+  if (num < 10) {
+    return num;
+  }
+  // Paso recursivo: suma el último dígito y hace una llamada recursiva con el número dividido por 10
+  else {
+    return num % 10 + sumaDigitos(num / 10);
+  }
+}
+
+int main() {
+  // Obtener el número del usuario
+  int num;
+  std::cout << "Ingrese un número entero mayor a cero: ";
+  std::cin >> num;
+
+  // Validar que el número sea mayor a cero
+  if (num <= 0) {
+    std::cout << "El número ingresado no es válido. Debe ser mayor a cero." << std::endl;
+    return 1;
+  }
+
+  // Calcular la suma de los dígitos utilizando la función recursiva
+  int suma = sumaDigitos(num);
+
+  // Mostrar el resultado en pantalla
+  std::cout << "La suma de los dígitos del número " << num << " es: " << suma << std::endl;
+
+  return 0;
+}
