@@ -1,0 +1,949 @@
+/***************************************************************************************************
+
+Ejercicio 1: 
+Implemente un programa en c++ que dado dos cadenas s y t, devuelve true si son
+iguales cuando ambas se escriben en editores de texto vacíos. El carácter '#'
+significa un carácter de retroceso.
+Tenga en cuenta que después de retroceder un texto vacío, el texto continuará
+vacío.
+- Ejemplo 1:
+Entrada: s = "12#3" t = "14#3"
+Salida: true
+Explicación: Tanto s como t se convierten en "13"
+- Ejemplo 2:
+Entrada: s = "12##" t = "3#4#"
+Salida: verdadero
+Explicación: Tanto s como t se convierten en ""
+- Ejemplo 3:
+Entrada: s = "1##3" t = "#1#3"
+Salida: true
+Explicación: Tanto s como t se convierten en "3"
+- Ejemplo 4:
+Entrada: s = "1#3" t = "2"
+Salida: falso
+Explicación: s se convierte en "c" mientras que t se convierten en "2"
+
+***************************************************************************************************/
+
+//Primera versión
+#include <iostream>
+
+using namespace std;
+
+template<typename T> class Stack{
+
+    struct node
+    {
+        T value;
+        node *next;
+        //node *prev;
+    };
+    int s=0;
+    node*head;
+
+    public:
+    void push(T a){
+        node * temp  = new node;
+        *temp = {a, head};
+        head= temp;
+        s++;
+    }
+    void pop(){
+        if(head==NULL) return;
+        node *temp = head;
+        head = head->next;
+        delete temp;
+        s--;
+    }
+    T front(){return head->value;}
+
+    int size(){return s;}
+
+};
+
+
+
+int main(){
+
+    string a, b;
+    cin>>a>>b;
+
+    Stack<char>s;
+    for(int i=0; i<a.size(); i++){
+        if(a[i]!='#') s.push(a[i]);
+        else s.pop();
+    }
+    a="";
+    while(s.size()){
+        a = s.front()+a;
+        s.pop();
+    }
+
+    for(int i=0;i<b.size(); i++){
+        if(b[i]!='#') s.push(b[i]);
+        else s.pop();
+    }
+    b="";
+    while(s.size()){
+        b = s.front() + b;
+        s.pop();
+    }
+
+    cout << (a==b? "YES": "NO") << endl;
+
+    cout << a << " " << b;
+
+}
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+//Segunda versión simplificada y con comentarios - Notación O: n + n = n
+// Nota del editor, me duele, pero los comentarios ni enunciados tendran tildes por si usa una IDE in english.
+
+#include <iostream>
+
+using namespace std;
+
+
+template<typename T> class Stack {
+
+    struct node
+    {
+        T value;
+        node* next;
+    };
+    int s = 0;
+    node* head; // Incializa
+
+public:
+    void push(T a) { // Inserta elemnto al principio
+        node* temp = new node;
+        *temp = { a, head };
+        head = temp;
+        s++;
+    }
+    void pop() { // Eliminma primer elemento
+        if (head == NULL) return;
+        node* temp = head;
+        head = head->next;
+        delete temp;
+        s--;
+    }
+    T front() { return head->value; } // Retorna el primer elemnto
+
+    int size() { return s; } // Retorna el tamanano del stack
+
+};
+
+string solve(string a) { // Procesar el string
+    Stack<char>s;
+    //Process
+
+    for (int i = 0; i < a.size(); i++) {
+        if (a[i] != '#') s.push(a[i]);// Si no es '#' insertamos el elemento
+        else s.pop(); // Si es '#' eliminamos el ultimo elemnto ingresado
+    }
+
+    // Formateamos
+    a = "";
+
+    // Reconstruccion
+    while (s.size()) {
+        a = s.front() + a;// Concatenamos a la izquierda
+        s.pop();// Eliminamos el primer elemento del stack
+    }
+
+    return a;//devolcemos el string 
+
+}
+
+int main() {
+
+    string a, b;
+    cin >> a >> b;
+    a = solve(a);// Proceso del string
+    b = solve(b);// Proceso del string
+    cout << (a == b ? "YES" : "NO") << endl; // Verificacion
+    cout << a << " " << b;
+
+}
+
+/***********************************************************************************************************
+
+Ejercicio 2 (Boomerang sorting):
+Implementar un algoritmo de ordenamiento que inicie comparando el primer par de valores
+(posicion 0 y 1 del arreglo). Si al evaluarlo se encuentra ordenado pasa a comparar el siguiente par 
+(posicion 1 y 2 del arreglo), de evaluarse que esta desordenado se intercambia el menor a la 
+izquierda y el mayor a la derecha, y se compara con el elemento anterior.
+Cuando compara hacia la derecha no se realiza intercambios, es que el par está ordenado entre si y cuando 
+compara hacia atrás, va haciendo intercambios.
+El arreglo esta ordenado cuando se alcanza el extremo superior.
+El proceso de ordenamiento parece como un boomerang de izquierda a derecha y de derecha a izquierda.
+Ejemplo:
+
+[d,c,b,e,a,f]-> d y c desordenado entonces intercambia
+[c,d,b,e,a,f]->c y d ordenado, sigue a la derecha; d y b desordenado entonces intercambia y regresa atrás
+[c,b,d,e,a,f]->b y c desordenado, entonces intercambia
+[b,c,d,e,a,f]
+[b,c,d,a,e,f]
+[b,c,a,d,e,f]
+[b,a,c,d,e,f]
+[a,b,c,d,e,f]
+
+1. (3 puntos) Implementar el algoritmo de ordenamiento según el caso descrito.
+2. (2 puntos) al costado del código, indicar el tiempo detallado y al final del método indicar
+el big O.
+
+***********************************************************************************************************/
+
+// Version 1 - Notación O = n^2:
+
+#include <iostream>
+using namespace std;
+
+int main(){
+    int n;cin >>n;
+    vector<int>arr;
+    for(int i=0; i<n; i++){
+        int x;cin>>x;
+        arr.push_back(x);
+    }//ingreso de datos
+
+    for(int i=1; i<n; i++){// Iteramos entre todos los elementos
+        // Iteracion a la derecha
+        if(arr[i-1]>arr[i]){ // Anomalia, incorrecto
+            // arr[i-1] = Posicion a la izquierda
+            // arr[i] = Posicion actual
+            swap(arr[i-1],arr[i]);// Resueve en el instante
+
+            for(auto e: arr)cout << e << " ";//imprimir el arreglo
+            cout << endl;
+
+            //iteracion a la izquierda
+            for(int j =i-1; j>0; j--){// Reubicamos nuevo elemtno añadido
+                if(arr[j-1]>arr[j]){
+                    swap(arr[j], arr[j-1]);
+                    for(auto e: arr)cout << e << " ";// Imprimir el arreglo
+                    cout << endl;
+                }
+            }
+        }
+    }
+}
+
+// Version 2 - Notacion Big O = n^3 :
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int n; cin >> n;//2
+    vector<int>arr;//1
+    for (int i = 0; i < n; i++) {//2 + n * (3 + 1+1+1)
+        int x; cin >> x;
+        arr.push_back(x);
+    }// Ingreso de datos
+
+    for (int i = 1; i < n; i++) {// Iteramos entre todos los elementos 2+ (n-1) * (3 + 1+2 + 4 +n*(2 + 2) +1+ 2 + i* (3 + 1 +2 + 4 + n(2+2) + 1))    n^3
+        // Iteracion a la derecha
+        if (arr[i - 1] > arr[i]) { // Anomalia, incorrecto
+            swap(arr[i - 1], arr[i]);// Resueve en el instante // 4 acciones
+
+            for (auto e : arr)cout << e << " ";// Imprimir el arreglo
+            cout << endl;
+
+            // Iteracion a la izquierda
+            for (int j = i - 1; j > 0; j--) {// Reubicamos nuevo elemtno añadido
+                if (arr[j - 1] > arr[j]) {
+                    swap(arr[j], arr[j - 1]);
+                    for (auto e : arr)cout << e << " ";// Imprimir el arreglo
+                    cout << endl;
+                }
+            }
+        }
+    }
+
+}
+
+//1 + 2 +2 + n * (3 + 1+1+1) + 2+ (n-1) * (3 + 1+2 + 4 +n*(2 + 2) +1+ 2 + i* (3 + 1 +2 + 4 + n(2+2) + 1))
+
+/***********************************************************************************************************
+
+Ejercicio 3:
+Dado el inicio de una lista enlazada, Ud. Elija tipo de lista de acuerdo con el caso, que
+agrupa todos los nodos con el atributo fuerza pares seguidos de los nodos con el
+atributo fuerza impares, y devuelve la lista reordenada.
+Tenga en cuenta que el orden relativo dentro de los grupos pares e impares debe
+permanecer como estaba en la entrada.
+
+Ejemplo 1:
+---------------   --------------   ----------------   ---------------   -------------   ------------
+|Bulbasaur,4,P|---|Venusaur,2,P|---|Charmander,3,F|---|Charizard,5,F|---|Ivysaur,3,P|---|Vulpix,4,F|
+---------------   --------------   ----------------   ---------------   -------------   ------------
+                                                 |  |
+                                                 |  |
+                                                \    /
+                                                  \/
+---------------   --------------   ------------   ----------------   ---------------   -------------
+|Bulbasaur,4,P|---|Venusaur,2,P|---|Vulpix,4,F|---|Charmander,3,F|---|Charizard,5,F|---|Ivysaur,3,P|
+---------------   --------------   ------------   ----------------   ---------------   -------------
+                                                 
+Input: inicios [0bj1,0bj2,0bj3,0j4,0bj5)
+Output: Objetos reordenados según criterio indicado
+Donde 0bj, es un objeto de clase. (Nombre de Pokemon, Fuerza o Poder, Tipo)
+
+***********************************************************************************************************/
+
+#include <iostream>
+using namespace std;
+
+struct pokemon {
+    string name;
+    int f;
+    char type;
+};
+
+template < typename T>class List {
+    struct node{
+        T value;
+        bool par;
+        node* next;
+        node* prev;
+    };
+    node* head = NULL, * tail = NULL;
+public:
+    class Iterator {
+    private:
+        node* current;
+    public:
+        Iterator(node* a) {
+            current = a;
+        }
+        Iterator() { current = head; }
+
+        Iterator& operator++() { //++i
+            if (current) {
+                current = current->next; // i++   ++i   i++-> ++i == 
+            }
+            return *this;
+        }
+        Iterator operator++(int) //i++        //i++   ++i
+        {
+            Iterator iterator = *this;
+            ++* this;
+            return iterator;
+        }
+        Iterator& operator=(node* a) {
+            this->current = a;
+            return *this;
+        }
+        bool operator!=(const Iterator& it) {
+            return current != it.current;
+        }
+        Iterator& operator+(int a) {
+            while (current and a) {
+                current = current->next;
+                a--;
+            }
+            return *this;
+        }
+        node* operator*() {
+            return current;
+        }
+    };
+
+    Iterator begin() { return Iterator(head); }
+    Iterator end() { return Iterator(nullptr); }
+
+    void push_back(T a, bool b) {
+        node* temp = new node;
+        *temp = { a, b,NULL, NULL };
+
+        if (tail == NULL) {
+            head = tail = temp;
+            return;
+        }
+        tail->next = temp;
+        temp->prev = tail;
+        tail = temp;
+    }
+
+    void sort() {
+        if (head == NULL or head->next == NULL)return;//n^2
+
+        node* temp = head->next;
+
+        while (temp != NULL) {
+            if (temp->prev->value.f > temp->value.f and temp->prev->par != temp->par) {
+                swap(temp->prev->value, temp->value);
+                swap(temp->prev->par, temp->par);
+                node* temp1 = temp->prev;
+
+                while (temp1->prev != NULL) {
+                    if (temp1->prev->value.f > temp1->value.f and temp1->prev->par != temp1->par) {
+                        swap(temp1->prev->value, temp1->value);
+                        swap(temp1->prev->par, temp1->par);
+                    }
+                    else break;
+                    temp1 = temp1->prev;
+                }
+            }
+            temp = temp->next;
+        }
+    }
+
+    void printList() {
+        node* temp = head;
+        while (temp != NULL) {
+            cout << temp->value.f << " ";
+            temp = temp->next;
+        }
+    }
+
+    void deleteNode(node* a) {
+        node* temp1 = a->prev;
+        node* temp2 = a->next;
+        delete a;
+        if (temp1 == NULL and temp2 == NULL) { head = tail = NULL; return; }
+        if (temp1 == NULL) {
+            head = temp2;
+            temp2->prev = NULL;
+            return;
+        }
+        if (temp2 == NULL) {
+            tail = temp1;
+            temp1->next = NULL;
+            return;
+        }
+        temp1->next = temp2;
+        temp2->prev = temp1;
+    }
+};
+
+
+int main() {
+    List<pokemon>l;
+
+    l.push_back({ "", 24, 't' }, 0);
+    l.push_back({ "", 2244, 't' }, 1);
+    l.push_back({ "", 224, 't' }, 0);
+    l.push_back({ "", 134, 't' }, 1);
+    l.push_back({ "", 2, 't' }, 0);
+
+    l.printList();
+    cout << endl;
+    l.sort();
+    l.printList();
+}
+
+/***********************************************************************************************************
+
+Ejercicio 4:
+El gobierno peruano ha creado el programa “Nos Preocupamos por ti” para adultos arriba de 60 años. 
+Ellos forman un conjunto ordenado en la plataforma para cobrar, la política del banco es estricta: 
+Los que llegan primero son los que cobran primero. Durante los últimos meses las personas adultas 
+han ido a cobrar, algunos puntualmente y otros se han olvidado. En la Municipalidad provincial 
+todas las personas adultas se encuentran registradas en una base de datos del programa, ellos 
+fueron registrados orden de llegada, y desde luego ellos siempre guardan su posición en la que se 
+registraron. Cuando ellos van a cobrar son sacados de esta base de datos y toda su información es 
+trasladada a la agencia del banco, además todos los datos de las personas adultas en la base de 
+datos actualizan su dirección. Lógicamente las personas adultas asisten en cualquier día. 
+De personas adultas se registra: dni, edad, sexo, monto, celular que reciben (entre 500 a 800 soles).
+Cuando ya cobran, la información de las personas adultas regresa a la base de datos de la
+Municipalidad de preferencia a su posición inicial. Para ello tenga en cuenta que, si la ubicación
+inicial supera el tamaño actual del conjunto de las personas adultas actualmente en la
+Municipalidad, entonces su nueva ubicación es al final, de lo contrario con suerte regresa a su
+ubicación original y todos sus vecinos actualizan su ubicación.
+El alcalde quiere hacer un seguimiento en tiempo real del comportamiento de estos
+beneficiarios por ello pide escribir un programa para simular el sistema explicado usando las
+estructuras de datos adecuadas teniendo en cuenta que son tres las agencias del Banco de la
+Nación en la ciudad.
+
+Para la implementación hacer uso de Listas Enlazada Doble.
+Criterio de Calificación
+* El desarrollo no debe hacer uso de contenedores STL.
+* (3 puntos) Desarrollar con Programación Orientada a Objetos, utilizar lambdas,
+funciones de recursividad.
+. (3 puntos) Creación de un método para generar datos para “n” personas adultas
+(10<n<10000) iniciales para la Municipalidad.
+* (3 puntos) Creación de la Estructura de Datos para almacenar los elementos (Lista
+Enlazada Doble).
+. (2 puntos) Desarrollo de una estructura de dato como pila o cola.
+* (2 puntos) Creación de los métodos para inserción y retiro de los elementos según
+especificación.
+. (2 puntos) ORDENAR las personas adultas en función a la edad.
+
+***********************************************************************************************************/
+
+#include <iostream>
+using namespace std;
+struct persona
+{
+    string dni;
+    int edad;
+    char sexo;
+    int monto;
+    string celular;
+    int pos;
+    bool operator>(const persona aux) {
+        return edad > aux.edad;
+    }
+
+};
+struct node
+{
+    persona value;
+    node* next;
+    node* prev;
+    bool operator>(const node aux) {
+        return value > aux.value;
+    }
+};
+
+class Queue {
+    int s = 0;
+    node* head = NULL, * tail = NULL;
+public:
+
+    void push_back(persona a) {
+        node* temp = new node;
+        *temp = { a, NULL, NULL };
+        if (tail == NULL) head = tail = temp;
+
+        temp->prev = tail;
+        tail->next = temp;
+        tail = temp;
+        s++;
+    }
+
+    void pop() {
+        if (!head) return;
+        if (s == 1) { delete head; head = tail = NULL; s--; return; }
+        s--;
+        node* temp = head;
+        head = head->next;
+        delete temp;
+    }
+
+    persona front() { return head->value; }
+    int size() { return s; }
+
+    void print() {
+        node* temp = head;
+        while (temp != NULL) {
+            cout << temp->value.dni << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+};
+
+class List {
+    int s = 0;
+    node* head = NULL, * tail = NULL;
+
+public:
+    List(int n) {
+        srand(time(0));
+        for (int i = 0; i < n; i++) {
+            node* temp = new node;
+            string dni = "";
+            string celular = "9";
+            for (int i = 0; i < 8; i++) { dni += (char)(rand() % 10 + '0'); celular += (char)(rand() % 10 + '0'); }
+            *temp = { {dni, rand() % 21 + 60, (rand() % 2 ? 'M' : 'F'), 0,celular, i}, NULL, NULL };
+            if (i == 0)head = tail = temp;
+            else {
+                temp->prev = tail;
+                tail->next = temp;
+                tail = temp;
+            }
+
+        }
+    }
+
+    void insert(persona a) {//n
+        node* temp = new node;
+        *temp = { a, NULL, NULL };
+        if (head == NULL) { head = temp; return; }//si no hay nada
+        if (head->value.pos > a.pos) {//en el princpio
+            temp->next = head;
+            head->prev = temp;
+            head = temp;
+            return;
+        }
+
+        node* it = head;
+        while (it->next != NULL) {
+            if (a.pos < it->next->value.pos) break;//buscamos
+            it = it->next;
+        }
+        if (it->next == NULL) {//al final de la lista
+            temp->prev = it;
+            it->next = temp;
+            tail = temp;
+            return;
+        }
+
+        node* temp1 = it->next;
+        temp->prev = it;//en medio de la lista
+        it->next = temp;
+        temp1->prev = temp;
+        temp->next = temp1;
+    }
+
+    persona Delete(int pos) {
+        if (pos == 0) {
+            node* temp = head;
+            (head->next)->prev = NULL;
+            persona a = head->value;
+            head = head->next;
+            delete temp;
+            return a;
+        }
+        node* temp = head;
+        pos--;
+        while (temp->next != NULL and pos) {
+            temp = temp->next;
+            pos--;
+        }
+        if (temp->next == NULL)return { NULL };
+
+
+        node* temp1 = temp->next->next;
+        node* el = temp->next;
+        persona a = el->value;
+
+        if (temp1 == NULL) {
+            temp->next = NULL;
+        }
+        else {
+            temp->next = temp1;
+            temp1->prev = temp;
+        }
+        delete el;
+        return a;
+    }
+
+    void sort() {
+        if (head == NULL or head->next == NULL) return;
+
+        node* temp = head->next;
+
+        while (temp != NULL) {
+            if (temp->prev->value.edad > temp->value.edad) { //temp->prev > temp
+                swap(temp->value, temp->prev->value);
+
+                node* temp1 = temp->prev;
+                while (temp1->prev != NULL) {
+                    if (temp1->prev->value.edad > temp1->value.edad) {
+                        swap(temp1->value, temp1->prev->value);
+                    }
+                    temp1 = temp1->prev;
+                }
+            }
+            temp = temp->next;
+        }
+
+    }
+    void print() {
+        node* temp = head;
+        while (temp != NULL) {
+            cout << temp->value.edad << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+    void printreversed() {
+        node* temp = tail;;
+        while (temp != NULL) {
+            cout << temp->value.edad << " ";
+            temp = temp->prev;
+        }
+        cout << endl;
+    }
+
+
+};
+
+int main() {
+
+    List vecinos(10);
+    Queue banco1;
+    Queue banco2;
+    Queue banco3;
+    vecinos.print();
+    banco1.push_back(vecinos.Delete(3));
+    banco1.push_back(vecinos.Delete(0));
+    vecinos.print();
+    banco1.push_back(vecinos.Delete(4));
+    vecinos.print();
+
+
+    while (banco1.size()) {
+        vecinos.insert(banco1.front()); banco1.pop();
+    }
+    vecinos.print();
+
+}
+
+/***********************************************************************************************************
+
+Ejercicio 5:
+Las Vegas siempre anda en búsqueda de nuevas formas de entretener a sus numerosos
+visitantes y darles la oportunidad de “ganar dinero”. Por ello han ideado un nuevo juego y
+le han invitado a participar del desarrollo de un programa para darle soporte. El nuevo
+juego, llamado ruleta de apuestas, permite a los participantes ingresar anotando su nombre
+y el monto de dinero con el que cuentan para participar. Los participantes toman su lugar
+alrededor de una mesa virtual circular muy grande, en la que pueden entrar decenas de
+miles de participantes. Los participantes van llegando y se sientan a la derecha de la
+persona anterior y hacen un depósito de S10. El juego empieza cuando hayan ingresado por
+lo menos 1000 participantes y el último participante en anotarse deberá empezar lanzando
+un dado de una variedad de caras numeradas desde 25000 a 15000000, luego se deberá
+pasar el dado a la izquierda, el número de posiciones indicado en el lanzamiento. La
+persona que reciba el dado ganará el monto acumulado del depósito de todos los
+participantes anotados menos el 15% que es la ganancia de la casa. Al final de cada
+rotación, más personas pueden entrar a la mesa pero ahora pueden entrar en cualquier
+posición que deseen y, como es un juego tan popular, miles de personas entran en cada
+nueva ronda hasta un máximo de 150000 en total. En cada nueva rotación, los nuevos
+participantes pagán $10 y los participantes actuales deben pagar $5. El participante que se
+quedó con el super dado, deberá lanzar y nuevamente se pasa el dado hacia la izquierda el
+número de posiciones indicado. El participante que finalmente recibe el dado gana el pozo
+acumulado menos el 15% y el juego vuelve a empezar. Los participantes que se queden sin
+dinero deberán retirarse. Sugerencia: genere participantes aleatoriamente para no tener que
+ingresarlos manualmente cada vez.
+
+Criterio de Calificación
+
+El desarrollo no debe hacer uso de contenedores STL.. (1 punto) 
+Desarrollar con POO. (2 puntos) 
+Creación de la Estructura de Datos para almacenar los elementos (2 puntos)
+Creación de un método para generar “n” elementos según especificación e incluirlo en la estructura de 
+datos.  (1 punto) 
+Creación de los métodos para inserción y retiro de los elementos según especificación. (2 puntos) 
+Implementación de la funcionalidad indicada, hacer la verificación mediante una función de prueba.
+
+
+***********************************************************************************************************/
+
+//Ejercicio Cueva
+#include <iostream>
+#include <string>
+#include <functional>
+using namespace std;
+
+template <class T>
+class ListaD;
+
+template <class T>
+class Nodo {
+	T valor;
+	Nodo<T>* sig;
+	Nodo<T>* prev;
+	friend class ListaD<T>;
+public:
+	Nodo(T valor, Nodo<T>* sig = nullptr, Nodo<T>* prev = nullptr) {
+		this->valor = valor;
+		this->sig = sig;
+		this->prev = prev;
+	}
+	~Nodo() {}
+};
+
+template <class T>
+class ListaD {
+private:
+	Nodo<T>* inicio;
+	Nodo<T>* final;
+	Nodo<T>* it;
+	unsigned long _tamanio;
+	unsigned long max_tamanio;
+public:
+	ListaD() {
+		it = inicio = final = nullptr;
+		max_tamanio = 1000;
+		_tamanio = 0;
+	}
+	void init() {
+		it = final;
+	}
+	unsigned long tamanio() {
+		return _tamanio;
+	}
+	void sig(long p) {
+		for (size_t i = 0; i < p; i++) {
+			if (it->sig != nullptr)
+				it = it->sig;
+			else
+				it = inicio;
+		}
+	}
+	void action(function<void(T)>f) {
+		f(it->valor);
+	}
+	void update(function<void(T)>f) {
+		Nodo<T>* tmp = inicio;
+		while (tmp != nullptr) {
+			f(it->valor);
+			tmp = tmp->sig;
+		}
+	}
+	void prev(long p) {
+		for (size_t i = 0; i < p; i++) {
+			it = it->prev != nullptr ? it->prev : inicio;
+		}
+	}
+	void push_back(T v) { //insercion a la derecha
+		Nodo<T>* n = new Nodo<T>(v);
+		if (_tamanio == 0) {
+			inicio = final = n;
+			++_tamanio;
+		}
+		else {
+			final->sig = n;
+			n->prev = final;
+			final = n;
+			++_tamanio;
+		}
+	}
+	void insertar(unsigned int pos, T v) {
+		Nodo<T>* n = new Nodo<T>(v);
+		if (_tamanio == 0) {
+			inicio = final = n;
+			++_tamanio;
+		}
+
+		if (pos <= 0) { //al inicio de la lista
+			n->sig = inicio;
+			inicio->prev = n;
+			++_tamanio;
+			inicio = n;
+		}
+		else if (pos >= _tamanio) { //al final de la lista
+			push_back(v);
+		}
+		else {
+			Nodo<T>* tmp = inicio;
+			for (size_t i = 0; i < pos; i++) {
+				tmp = tmp->sig;
+			}
+			n->sig = tmp;
+			n->prev = tmp->prev;
+			tmp->prev = n;
+			n->prev->sig = n;
+			++_tamanio;
+		}
+	}
+	void remove(Nodo<T>*& n) {
+		if (_tamanio == 0)return;
+		Nodo<T>* aux;
+		if (n == inicio) { //para el caso del primer elemento
+			aux = n;
+			inicio = n->sig;
+			inicio->prev = nullptr;
+			n = inicio;
+		}
+		else if (n = final) { //para el caso del final
+			aux = final;
+			final = n->prev;
+			final->sig = nullptr;
+			n = final;
+		}
+		else {
+			aux = n;
+			n->prev->sig = n->sig;
+			n->sig->prev = n->prev;
+			n = n->prev;
+		}
+		delete aux;
+		--_tamanio;
+	}
+	void removeByCondition(function<bool(T)> f) {
+		Nodo<T>* tmp = inicio;
+		for (; tmp != nullptr;) {
+			if (f(tmp->valor))
+				remove(tmp);
+			tmp = tmp->sig;
+		}
+	}
+};
+
+class Participante {
+	string nombre;
+	float monto;
+public:
+	Participante(string nombre = " ", float monto = 10.0f) :nombre(nombre), monto(monto) {}
+	void setMonto(float m) {
+		monto = m;
+	}
+	float getMonto() {
+		return monto;
+	}
+};
+
+class Ruleta {
+	ListaD<Participante> participantes;
+	float deposito;
+	float casa;
+public:
+	Ruleta() {
+		deposito = 0.0f;
+		casa = 0.0f;
+	}
+	void inicializar() {
+		for (size_t i = 0; i < rand() % 1000 + 1000; i++) {
+			participantes.push_back(Participante("", rand() % 1000));
+			deposito += 10;
+		}
+		participantes.init(); //inicializar el iterador en la ultima posicion
+	}
+	void jugar() {
+		//tirar el dado
+		unsigned long temp = rand() % 14975001 + 25000;
+		unsigned long pos = temp % participantes.tamanio();
+		participantes.prev(pos);
+		//asignar el jugador ganador
+		casa += deposito * 0.15;
+		participantes.action([&](Participante p) {p.setMonto(p.getMonto() + deposito * 0.85);
+		cout << "El jugador ganador obtuvo " << p.getMonto() << endl;
+			});
+		actualizaMonto();
+		deposito = 0;
+	}
+	void actualizaMonto() {
+		//eliminar los participantes con monto 0
+		participantes.removeByCondition([](Participante p) {return p.getMonto() == 0; });
+		//actualizamos los montos masivos de todos los jugadores
+		participantes.update([](Participante p) {
+			if (p.getMonto() >= 5)
+				p.setMonto(p.getMonto() - 5); });
+	}
+	void nuevoIngreso() {
+		long pos = rand() % participantes.tamanio();
+		participantes.insertar(pos, Participante("", rand() % 1000));
+		deposito += 10;
+	}
+	void simular() {
+		actualizaMonto();
+		deposito += 5 * participantes.tamanio();
+		for (size_t i = 0; i < 10; i++) {
+			nuevoIngreso();
+		}
+		cout << "El monto acumulado " << deposito << endl;
+		jugar();
+		cout << "_____________________________" << endl;
+	}
+	void getCasa() {
+		cout << "La casa obtuvo: " << casa << endl;
+	}
+};
+
+int main() {
+	srand(time(0));
+	Ruleta juego;
+	juego.inicializar();
+	for (size_t i = 0; i < 10; i++)
+		juego.simular();
+
+	juego.getCasa();
+	return 0;
+}
+
