@@ -1,0 +1,730 @@
+//////////////////////EJEMPLO 1//////////////////////////
+/*************************************************************************
+    > Cola de Prioridad máxima
+ ************************************************************************/
+#include<iostream>
+#include<cstdio>
+#include<list>
+#include<vector>
+#include<unordered_map>
+#include<climits>
+#include<unordered_set>
+#include<map>
+#include<set>
+#include<stack>
+
+#include "p_queue.h"
+
+int main()
+{
+    int A[10] = { 10,9,8,7,6,5,4,3,2,1 };
+    p_queue q1(A, 10);
+
+    std::cout << q1.maximum() << std::endl;
+    q1.insert(20);
+    q1.insert(10);
+    std::cout << q1.maximum() << std::endl;
+    q1.extract_max();
+    std::cout << q1.maximum() << std::endl;
+    q1.increase_key(0, 5);
+    std::cout << q1.maximum() << std::endl;
+    q1.extract_max();
+    std::cout << q1.maximum() << std::endl;
+    q1.increase_key(1, 30);
+    std::cout << q1.maximum() << std::endl;
+
+    return 0;
+}
+
+////////
+
+
+/*************************************************************************
+    > Implementación de Cola de prioridad
+ ************************************************************************/
+
+#include "p_queue.h"
+#include <limits>
+
+p_queue::p_queue(int* A, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        a[i] = A[i];
+    }
+    size = n;
+    buildMaxHeap(a, size);
+}
+
+void p_queue::insert(int x)
+{
+    size++;
+    a[size - 1] = x;
+    int i = size - 1;
+    while (i > 0 && a[parent(i)] < a[i])
+    {
+        std::swap(a[i], a[parent(i)]);
+        i = parent(i);
+    }
+}
+
+int p_queue::maximum()
+{
+    if (size <= 0)
+    {
+        std::cerr << "heap overflow" << std::endl;
+        return -1;
+    }
+    return a[0];
+}
+
+int p_queue::extract_max()
+{
+    if (size <= 0)
+    {
+        std::cerr << "heap overflow" << std::endl;
+        return -1;
+    }
+    int max = a[0];
+    a[0] = a[size - 1];
+    size--;
+    maxHeapify(a, size, 0);
+    return max;
+}
+
+void p_queue::increase_key(int i, int x) {
+    a[i] = std::max(a[i], x);
+
+    while (i > 0 && a[parent(i)] < a[i]) {
+        std::swap(a[parent(i)], a[i]);
+        i = parent(i);
+    }
+}
+
+int p_queue::parent(int i)
+{
+    return (i - 1) / 2;
+}
+
+int p_queue::left(int i)
+{
+    return 2 * i + 1;
+}
+
+int p_queue::right(int i)
+{
+    return 2 * i + 2;
+}
+
+void p_queue::maxHeapify(int A[], int n, int i)
+{
+    int l = left(i);
+    int r = right(i);
+    int largest(0);
+    if (l <= (n - 1) && A[l] > A[i])
+        largest = l;
+    else
+        largest = i;
+    if (r <= (n - 1) && A[r] > A[largest])
+        largest = r;
+    if (largest != i)
+    {
+        std::swap(A[i], A[largest]);
+        maxHeapify(A, n, largest);
+    }
+}
+
+void p_queue::buildMaxHeap(int A[], int n)
+{
+    for (int i = n / 2 - 1; i >= 0; i--)
+        maxHeapify(A, n, i);
+}
+
+void p_queue::heapsort(int A[], int n)
+{
+    buildMaxHeap(A, n);
+    for (int i = n - 1; i > 0; i--)
+    {
+        std::swap(A[0], A[i]);
+        maxHeapify(A, --n, 0);
+    }
+}
+
+
+
+
+/////////////
+
+/*************************************************************************
+    > Definición de la clase Cola de Prioridad
+
+#ifndef _P_QUEUE_H
+
+
+#define _P_QUEUE_H
+#endif
+
+#include <iostream>
+
+class p_queue
+{
+public:
+    p_queue(int* A, int n);
+    void insert(int x);
+    int maximum(void);
+    int extract_max(void);
+    void increase_key(int i, int x);
+
+private:
+    int a[10000];
+    int size;
+
+    int parent(int i);
+    int left(int i);
+    int right(int i);
+    void maxHeapify(int A[], int n, int i);
+    void buildMaxHeap(int A[], int n);
+    void heapsort(int A[], int n);
+};
+
+
+/////////////////////////EJEMPLO 2///////////////////////
+
+#include <iostream>
+using namespace std;
+
+#include "Heap.hpp"
+
+int main() {
+	int A[10] = { 16,14,10,8,7,19,3,2,4,1 };
+	buildMaxHeap(A, 10);
+	print(A, 10);
+	cout << endl;
+	heapsort(A, 10);
+	print(A, 10);
+
+	cin.ignore();
+	cin.get();
+	return 0;
+}
+
+///////////
+
+#ifndef __HEAP_HPP__
+#define __HEAP_HPP__
+
+/*#include <iostream>
+using namespace std;
+*/
+
+int parent(int i) {
+	return (i - 1) / 2;
+}
+int left(int i) {
+	return 2 * i + 1;
+}
+int rigth(int i) {
+	return 2 * i + 2;
+}
+
+void maxHeapify(int A[], int n, int i) {
+	int l = left(i);
+	int r = rigth(i);
+	int largest(0);
+	if (l <= (n - 1) && A[l] > A[i]) {
+		largest = l;
+	}else
+		largest = i;
+	if (r <= (n - 1) && A[r] > A[largest]) {
+		largest = r;
+	}
+	if (largest != i) {
+		swap(A[i], A[largest]);
+		maxHeapify(A, n, largest);
+	}
+}
+
+void buildMaxHeap(int A[], int n) {
+	for (int i = n / 2 - 1;i >= 0;--i) {
+		maxHeapify(A, n, i);
+	}
+}
+
+void print(int A[], int n) {
+	for (int i = 0;i < n;++i) {
+		cout << A[i] << " ";
+		//cout << endl;
+	}
+}
+
+//aplicación de ordenamiento
+void heapsort(int A[], int n) {
+	buildMaxHeap(A, n);
+	for (int i = n - 1;i > 0;--i) {
+		swap(A[0], A[i]);
+		maxHeapify(A, --n, 0);
+	}
+}
+
+#endif // !__HEAP_HPP__
+
+////////////////////////////////////////////////////////////////
+
+#include <iostream>
+using namespace std;
+
+#include "Heap.hpp"
+
+int main() {
+	int A[10] = { 16,14,10,8,7,19,3,2,4,1 };
+	buildMaxHeap(A, 10);
+	print(A, 10);
+	cout << endl;
+	heapsort(A, 10);
+	print(A, 10);
+
+	cin.ignore();
+	cin.get();
+	return 0;
+}
+
+///////////////////////////////EJEMPLO 3//////////////////////////////
+
+#include <iostream>
+#include "HashEntidad.hpp"
+#include "HashTabla.hpp"
+
+using namespace std;
+
+void imprimirTablaHash(HashTabla *ht,int*keys) {
+	cout << "SIZE TABLA: " << ht->size()<<endl;
+	cout << "SIZE ACTUAL: " << ht->sizeactual() << endl;
+	for (int i = 0; i < ht->size(); ++i) {
+		cout << ht->buscar(keys[i])<< " : " <<keys[i] << endl;
+	}
+}
+
+int main() {
+	HashTabla *ht = new HashTabla(9);
+	int keys[] = {6,34,67,92,8,5,3,2,15};
+	ht->insertar(6, 60);
+	ht->insertar(34, 340);
+	ht->insertar(67, 160);
+	ht->insertar(92, 360);
+	ht->insertar(8, 120);
+	ht->insertar(5, 452);
+	ht->insertar(3, 422);
+	ht->insertar(2, 952);
+	ht->insertar(15, 752);
+
+	imprimirTablaHash(ht, keys);
+
+	cin.get();
+
+	return 0;
+}
+
+
+//////////
+
+#ifndef __HASHENTIDAD_HPP__
+#define __HASHENTIDAD_HPP__
+
+class HashEntidad {
+private:	
+	int key;
+	int value;
+public:
+	HashEntidad(int key, int value) {
+		this->key = key;
+		this->value = value;
+	}
+	int getKey() { return key; }
+	int getValue() { return value; }
+};
+
+#endif // !__HASHENTIDAD_HPP__
+
+////////
+
+#ifndef __HASHTABLA_HPP__
+#define __HASHTABLA_HPP__
+#include <iostream>
+#include "HashEntidad.hpp"
+
+class HashTabla {
+private:
+	HashEntidad ** tabla;
+	int numElementos;
+	int TABLE_SIZE;
+
+public:
+	HashTabla(int TABLE_SIZE = 128) {
+		this->TABLE_SIZE = TABLE_SIZE;
+		tabla = new HashEntidad*[TABLE_SIZE];
+		for (int i = 0; i < TABLE_SIZE; ++i) {
+			tabla[i] = nullptr;
+		}
+		numElementos = 0;
+	}
+	~HashTabla()
+	{
+		for (int i = 0; i < TABLE_SIZE; ++i) {
+			if (tabla[i] != nullptr) {
+				delete tabla[i];
+			}
+		}
+		delete[] tabla;
+	}
+	//Direccionamiento según Prueba Lineal
+	void insertar(int key, int value) {
+		//Hash prima
+		int base, step, hash;
+		//validar si la tabla está llena
+		if (numElementos == TABLE_SIZE)return;
+		//Función Hash1
+		base = key%TABLE_SIZE;
+		hash = base;
+		//constante para Hash2
+		step = 0;
+		while (tabla[hash]!=nullptr)
+		{
+			//Función Hash2
+			hash = (base + step) % TABLE_SIZE;
+			step++;
+		}
+		//almacenarlo en la tabla
+		tabla[hash] = new HashEntidad(key,value);
+		numElementos++;
+	}
+	int size() {
+		return TABLE_SIZE;
+	}
+	int sizeactual() {
+		return numElementos;
+	}
+	int buscar(int key) {
+		int step = 0;
+		int i, base;
+		i = base = key%TABLE_SIZE; //hash1 es = a hash2 cuando step=0;
+		while (true)
+		{
+			if (tabla[i] == nullptr)return -1;
+			else if(tabla[i]->getKey()==key) {
+				return i;
+			}
+			else step++;
+
+			i = (base + step) % TABLE_SIZE;
+		}
+	}
+};
+
+
+#endif // !__HASHTABLA_HPP__
+
+//////////////////////////////////EJEMPLO 4///////////////////////////////
+
+#include <iostream>
+#include "HashTablaAbierto.h"
+#include "HashEntidad.hpp"
+
+using namespace std;
+
+// Simple main
+int main()
+{
+	HashTablaA ht = HashTablaA();
+	ht.insert(HashEntidad(1000,680));
+	ht.insert(HashEntidad(1500, 100));
+	ht.insert(HashEntidad(950, 68));
+		
+		
+	cout << "Vista de la tabla Hash:" << endl;
+	ht.DispAll();
+
+	cin.get();
+	return 0;
+}
+
+/////////
+
+#ifndef __ENTIDADHASH_HPP__
+#define __ENTIDADHASH_HPP__
+
+class HashEntidad {
+private:
+	int key;
+	int value;
+
+public:
+	HashEntidad(){}
+	HashEntidad(int key, int value) {
+		this->key = key;
+		this->value = value;
+	}
+	int getKey() {
+		return key;
+	}
+	int getValue() {
+		return value;
+	}
+};
+
+
+
+#endif // !__ENTIDADHASH_HPP__
+
+///////////
+
+#ifndef __HASHTABLA_HPP__
+#define __HASHTABLA_HPP__
+#include <vector>
+#include <list>
+#include <string>
+using namespace std;
+
+typedef unsigned int size_t;
+
+template <typename HashedObj>
+class HashTabla {
+private:
+	vector<list<HashedObj>> theLists;   // The array of Lists
+	int  currentSize;
+
+public:
+	explicit HashTabla(int size = 101) : currentSize{ 0 }
+	{
+		theLists.resize(101);
+	}
+
+	bool contains(const HashedObj & x) const
+	{
+		auto & whichList = theLists[myhash(x)];
+		return find(begin(whichList), end(whichList), x) != end(whichList);
+	}
+
+	void makeEmpty()
+	{
+		for (auto & thisList : theLists)
+			thisList.clear();
+	}
+
+	bool insert(const HashedObj & x)
+	{
+		auto & whichList = theLists[myhash(x)];
+		if (find(begin(whichList), end(whichList), x) != end(whichList))
+			return false;
+		whichList.push_back(x);
+
+		// Rehash; 
+		if (++currentSize > theLists.size())
+			rehash();
+
+		return true;
+	}
+
+	bool insert(HashedObj && x)
+	{
+		auto & whichList = theLists[myhash(x)];
+		if (find(begin(whichList), end(whichList), x) != end(whichList))
+			return false;
+		whichList.push_back(std::move(x));
+
+		// Rehash; 
+		if (++currentSize > theLists.size())
+			rehash();
+
+		return true;
+	}
+
+	bool remove(const HashedObj & x)
+	{
+		auto & whichList = theLists[myhash(x)];
+		auto itr = find(begin(whichList), end(whichList), x);
+
+		if (itr == end(whichList))
+			return false;
+
+		whichList.erase(itr);
+		--currentSize;
+		return true;
+	}
+
+	void DispAll() {
+		int pos = 0;
+		for (auto & thisList : theLists) {
+			cout << "Key: " + to_string(pos) << " | ";
+			for (auto & it : theLists[pos]) {
+				cout << it << ",";
+			}
+			cout << endl;
+			pos++;
+		}
+	}
+
+private:
+	/**
+	* Internal method to test if a positive number is prime.
+	* Not an efficient algorithm.
+	*/
+	bool isPrime(int n)
+	{
+		if (n == 2 || n == 3)
+			return true;
+
+		if (n == 1 || n % 2 == 0)
+			return false;
+
+		for (int i = 3; i * i <= n; i += 2)
+			if (n % i == 0)
+				return false;
+
+		return true;
+	}
+
+	/**
+	* Internal method to return a prime number at least as large as n.
+	* Assumes n > 0.
+	*/
+	int nextPrime(int n)
+	{
+		if (n % 2 == 0)
+			++n;
+
+		for (; !isPrime(n); n += 2)
+			;
+
+		return n;
+	}
+
+	void rehash()
+	{
+		vector<list<HashedObj>> oldLists = theLists;
+
+		// Create new double-sized, empty table
+		theLists.resize(nextPrime(2 * theLists.size()));
+		for (auto & thisList : theLists)
+			thisList.clear();
+
+		// Copy table over
+		currentSize = 0;
+		for (auto & thisList : oldLists)
+			for (auto & x : thisList)
+				insert(std::move(x));
+	}
+
+	/**
+	* A hash routine for string objects.
+	*/
+	size_t hash(const HashedObj & key) const
+	{
+		size_t hashVal = 0;
+
+		for (char ch : key)
+			hashVal = 37 * hashVal + ch;
+
+		return hashVal;
+	}
+
+	/**
+	* A hash routine for ints.
+	*/
+	size_t hash(int key)
+	{
+		return key;
+	}
+
+	size_t myhash(const HashedObj& x) const {
+		size_t hashVal = hash(x);
+		hashVal %= theLists.size();
+		if (hashVal < 0)
+			hashVal += theLists.size();
+		return(hashVal);
+	}
+};
+
+#endif // !__HASHTABLA_HPP__
+
+////////////
+
+#ifndef __HASHTABLA_HPP__
+#define __HASHTABLA_HPP__
+#include <iostream>
+#include <vector>
+#include <list>
+#include <string>
+#include "HashEntidad.hpp"
+using namespace std;
+
+typedef unsigned int size_t;
+
+class HashTablaA {
+private:
+	vector<list<HashEntidad>> theLists;   // Tabla
+	int  currentSize;
+
+public:
+	explicit HashTablaA(int size = 101) : currentSize{ 0 }
+	{
+		theLists.resize(101);
+	}
+
+	void makeEmpty()
+	{
+		for (auto & thisList : theLists)
+			thisList.clear();
+	}	
+
+	bool insert(HashEntidad && x)
+	{
+		auto & whichList = theLists[myhash(x.getKey())]; //Obtenemos la lista de elementos según el hash obtenido
+		
+		whichList.push_back(x); //Agregamos el nuevo elemento a la lista
+
+		return true;
+	}	
+
+	void DispAll() {
+		int pos = 0;
+		for (auto & thisList : theLists) {
+			cout << "Key: " + to_string(pos) << " | ";
+			for (auto & it : theLists[pos]) {
+				cout << it.getKey() << ",";
+			}
+			cout << endl;
+			pos++;
+		}
+	}
+
+private:		
+	
+	size_t myhash(const int key) const {
+		size_t hashVal=key;
+		hashVal %= theLists.size();
+		//hashVal = 10; //Prueba para verificar como se almacenan los elementos si obtienen el mismo hash
+		return(hashVal);
+	}
+};
+
+#endif // !__HASHTABLA_HPP__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
